@@ -32,6 +32,24 @@ let site = [
 ];
 
 let contents = [];
+const getView = (url) => {
+    const newWindow = new BrowserWindow({
+        webPreferences : {
+            nodeIntegration: true,
+            contextIsolation: false,
+            enableRemoteModule: false,
+            webviewTag: true
+        }
+    });
+    newWindow.loadURL(url);
+    // newWindow.webContents.send('did-finish-load', url);
+    // newWindow.setMenu(null);
+    newWindow.setFullScreen(null);
+}
+
+ipcMain.on('loadSite', (e, url) =>{
+    getView(url);
+});
 
 const getUrl = {
     'dongguk': async (urlbase, pageIndex, board) => {
@@ -51,7 +69,7 @@ const getUrl = {
             const title = $('.tit')[i].children[0].data.trim(' ');
             const date = $('.info span:first-child')[i].children[0].data;
             const detailId = $('.board_list ul li a')[i].attribs['onclick'].substring(9,17);
-            contents.push({title:title, date:date, id:detailId});
+            contents.push({title:title, date:date, id:detailId, urlbase:site[0].url, board:site[0].board[0]});
         }
         Promise.resolve(contents);
     }
