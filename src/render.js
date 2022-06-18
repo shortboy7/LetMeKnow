@@ -1,5 +1,6 @@
 const {ipcRenderer, desktopCapturer} = require('electron');
 const contentList = document.querySelector('.contentList');
+
 ipcRenderer.on('init',(event, argument)=>{
     for(item of argument){
         let newItem = document.createElement('li');
@@ -9,6 +10,7 @@ ipcRenderer.on('init',(event, argument)=>{
         let newTitle = document.createElement('a');
         newTitle.className = 'content_title';
         newTitle.innerText = item.title;
+        newTitle.src = `${item.urlbase}${item.board}/detail/${item.detailId}`
         let newContentDate = document.createElement('div');
         newContentDate.className = 'content_date'
         let newStartDate = document.createElement('span');
