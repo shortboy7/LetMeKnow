@@ -44,12 +44,14 @@ const getUrl = {
         for(let i = 0; i < 6 ; i++){
             const date = $('.info span:first-child')[i].children[0].data;
             const title = $('.tit')[i].children[2].data.trim(' ');
-            contents.push({title:title, date:date});
+            const detailId = $('.board_list ul li a')[i].attribs['onclick'].substring(9,17);
+            contents.push({title:title, date:date, id:detailId});
         }
         for(let i = 6; i < $('.tit').length; i++){
             const title = $('.tit')[i].children[0].data.trim(' ');
             const date = $('.info span:first-child')[i].children[0].data;
-            contents.push({title:title, date:date});
+            const detailId = $('.board_list ul li a')[i].attribs['onclick'].substring(9,17);
+            contents.push({title:title, date:date, id:detailId});
         }
         Promise.resolve(contents);
     }
@@ -67,12 +69,6 @@ async function createWindow(){
     await getUrl['dongguk'](site[0].url, 3, site[0].board[0])
     // console.log(contents);
     win.webContents.send('init', contents);
-
-    // win.webContents.on('did-finish-load', () => {
-    //     getUrl['dongguk'](site[0].url, 3, site[0].board[0]).then(()=>{
-    //         console.log(contents);
-    //     });
-    // })
 }
 
 app.on('ready', () => {
