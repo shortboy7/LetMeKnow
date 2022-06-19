@@ -47,8 +47,9 @@ const getView = (url) => {
     newWindow.setFullScreen(null);
 }
 
-ipcMain.on('loadSite', (e, url) =>{
-    getView(url);
+ipcMain.on('loadSite', (e, idx) =>{
+    const article = contents[idx];
+    getView(article.detailUrl);
 });
 
 const getUrl = {
@@ -63,13 +64,25 @@ const getUrl = {
             const date = $('.info span:first-child')[i].children[0].data;
             const title = $('.tit')[i].children[2].data.trim(' ');
             const detailId = $('.board_list ul li a')[i].attribs['onclick'].substring(9,17);
-            contents.push({title:title, date:date, id:detailId});
+            contents.push({
+                title:title, 
+                date:date, 
+                id:detailId, 
+                detailUrl : `${urlbase}${board}/detail/${detailId}`
+            });
         }
         for(let i = 6; i < $('.tit').length; i++){
             const title = $('.tit')[i].children[0].data.trim(' ');
             const date = $('.info span:first-child')[i].children[0].data;
             const detailId = $('.board_list ul li a')[i].attribs['onclick'].substring(9,17);
-            contents.push({title:title, date:date, id:detailId, urlbase:site[0].url, board:site[0].board[0]});
+            // console.log(detailId);
+
+            contents.push({
+                title:title, 
+                date:date, 
+                id:detailId, 
+                detailUrl : `${urlbase}${board}/detail/${detailId}`
+            });
         }
         Promise.resolve(contents);
     }

@@ -4,6 +4,7 @@ const contentList = document.querySelector('.contentList');
 ipcRenderer.on('init',(event, argument)=>{
     for(let i = 0; i < argument.length; i++){
         item = argument[i];
+        console.log(argument[i]);
         let newItem = document.createElement('li');
         newItem.className = 'content';
         let newIcon = document.createElement('i');
@@ -11,8 +12,9 @@ ipcRenderer.on('init',(event, argument)=>{
         let newTitle = document.createElement('a');
         newTitle.className = 'content_title';
         newTitle.innerText = item.title;
-        newTitle.onclick = () =>{
-            ipcRenderer.send('loadSite', `${item.urlbase}${item.board}/detail/${item.id}`);
+        newTitle.onclick = (event) =>{
+            console.log(i);
+            ipcRenderer.send('loadSite', i);
         }
         let newContentDate = document.createElement('div');
         newContentDate.className = 'content_date'
