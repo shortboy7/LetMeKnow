@@ -58,7 +58,6 @@ const getUrl = {
             // responseType:'document',
             // responseEncoding:'utf8' //UTF-8 , binary, 
         });
-        // console.log(response);
         const $ = cheerio.load(response.data.toString());
         for(let i = 0; i < 6 ; i++){
             const date = $('.info span:first-child')[i].children[0].data;
@@ -67,7 +66,6 @@ const getUrl = {
             contents.push({
                 title:title, 
                 date:date, 
-                id:detailId, 
                 detailUrl : `${urlbase}${board}/detail/${detailId}`
             });
         }
@@ -75,12 +73,10 @@ const getUrl = {
             const title = $('.tit')[i].children[0].data.trim(' ');
             const date = $('.info span:first-child')[i].children[0].data;
             const detailId = $('.board_list ul li a')[i].attribs['onclick'].substring(9,17);
-            // console.log(detailId);
 
             contents.push({
                 title:title, 
                 date:date, 
-                id:detailId, 
                 detailUrl : `${urlbase}${board}/detail/${detailId}`
             });
         }
@@ -98,7 +94,6 @@ async function createWindow(){
     });
     win.loadFile("./src/index.html");
     await getUrl['dongguk'](site[0].url, 3, site[0].board[0])
-    // console.log(contents);
     win.webContents.send('init', contents);
 }
 

@@ -12,8 +12,8 @@ ipcRenderer.on('init',(event, argument)=>{
         let newTitle = document.createElement('a');
         newTitle.className = 'content_title';
         newTitle.innerText = item.title;
+
         newTitle.onclick = (event) =>{
-            console.log(i);
             ipcRenderer.send('loadSite', i);
         }
         let newContentDate = document.createElement('div');
