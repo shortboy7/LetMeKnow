@@ -1,57 +1,70 @@
-/* $border-color: #3D315B;
-$background-color: #266DD3;
-$list-background-color: #444B6E;
-$active-list-background-color: #9AB87A;
-$border-radius: 5px; */
+
+:root{
+--border-color: #3D315B;
+--background-color: #266DD3;
+--list-background-color: #444B6E;
+--active-list-background-color: #9AB87A;
+--border-radius: 5px;
+}
 
 * {
   font-family: 'Poppins';
 }
+
 body {
-  background-color: $background-color;
+  background-color: --background-color;
   margin: 0;
 }
+
 a:hover {
   cursor: pointer;
 }
+
 #pagination {
   display: flex;
-  height: 100vh;
+  height: 1vh;
   align-items: center;
   justify-content: center;
   flex-direction: column;
 }
-ul {
+
+#pagination ul {
   list-style: none;
   padding: 0;
   margin: 0;
   display: flex;
-  li {
-    color: #fff;
-    display: flex;
-    a {
-      background-color: #444B6E;
-      padding: 5px 10px;
-      border: 2px solid $border-color;
-      border-right: 0;
-    }
-  }
-  // li.previous,
-  // li.next {
-  //   animation: fadein .5s;
-  // }
-  li.active a {
-    background-color: $active-list-background-color;
-  }
-  li:first-child a {
-    border-radius: $border-radius 0 0 $border-radius;
-  }
-  li:last-child a {
-    border-radius: 0 $border-radius $border-radius 0;
-    border-right: 2px solid $border-color;
-  }
 }
 
+#pagination ul li {
+    color: #fff;
+    display: flex;
+    
+}
+
+#pagination ul li a {
+    background-color: #444B6E;
+    padding: 5px 10px;
+    border: 2px solid --border-color;
+    border-right: 0;
+}
+
+#pagination li.previous,
+#pagination li.next {
+    animation: fadein .5s;
+}
+
+#pagination ul li.active a {
+    background-color: --active-list-background-color;
+}
+
+#pagination ul li:first-child a {
+    border-radius: --border-radius 0 0 --border-radius;
+}
+
+#pagination ul li:last-child a {
+    border-radius: 0 --border-radius --border-radius 0;
+    border-right: 2px solid --border-color;
+}
 /* // When I feel motivated to get this working
 // @keyframes fadein {
 //   from {opacity: 0;}
