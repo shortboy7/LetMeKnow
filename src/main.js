@@ -1,13 +1,13 @@
 const {app, Menu,BrowserWindow, ipcMain, webContents} = require("electron");
-const axios = require('axios').default;
-const cheerio = require('cheerio');
-const Iconv = require('iconv').Iconv;
+const Parser = require('./Parser');
 const fs = require('fs');
 const { stringify } = require("querystring");
 const { webcrypto } = require("crypto");
 const { resolve } = require("path");
 
-let site = [
+const parser = new Parser();
+
+const site = [
     {
         'name':'dongguk',
         'url':'https://www.dongguk.edu/article/',
@@ -21,14 +21,14 @@ let site = [
             'HAKSULNOTICE',
         ]
     },
-    {
-        'name':'dongguk_computer_enginner',
-        'url':'https://cse.dongguk.edu/?',
-        'board': [
-            //pageid = 1&page_id=799
-            '799',
-        ]
-    },
+    // {
+    //     'name':'dongguk_computer_enginner',
+    //     'url':'https://cse.dongguk.edu/?',
+    //     'board': [
+    //         //pageid = 1&page_id=799
+    //         '799',
+    //     ]
+    // },
 ];
 
 let contents = [];
@@ -62,6 +62,11 @@ function filterContents(){
             }
         }
     }
+    newFilteredContents.sort((left, right) => {
+        if(left.date < right.date) return 1;
+        else if(left.date > right.date) return -1;
+        else return 0;
+      });
     filteredContents = newFilteredContents;
 }
 
@@ -81,52 +86,17 @@ const getView = (url) => {
 }
 
 ipcMain.on('loadSite', (e, idx) =>{
-    const article = contents[idx];
+    const article = filteredContents[idx];
     getView(article.detailUrl);
 });
 
-const getUrl = {
-    'dongguk': async (urlbase, pageIndex, board) => {
-        let response = await axios.get(`${urlbase}${board}/list?pageIndex=${pageIndex}`, {
-            // responseType:'document',
-            // responseEncoding:'utf8' //UTF-8 , binary, 
-        });
-        const $ = cheerio.load(response.data.toString());
-        for(let i = 6; i < $('.tit').length; i++){
-            const title = $('.tit')[i].children[0].data.trim(' ');
-            const date = $('.info span:first-child')[i].children[0].data;
-            const detailId = $('.board_list ul li a')[i].attribs['onclick'].substring(9,17);
 
-            contents.push({
-                title:title, 
-                date:date, 
-                detailUrl : `${urlbase}${board}/detail/${detailId}`
-            });
-        }
-        filterContents();
-        main.webContents.send('init', filteredContents);
-        Promise.resolve();
-    }
-};
 
 async function createWindow(){
     main.loadFile("./src/index.html");
-    initContents();
 }
 
-async function initContents() {
-    for(let s = 0 ; s <= 0 ; s++){
-        for(let b = 0 ; b < site[0].board.length; b++){
-            for(let p = 1; p < 3; p++){
-                setTimeout(() => {
-                    getUrl['dongguk'](site[s].url, p, site[s].board[b]);
-                }, 1000);
-            }
-        }
-    }
-}
-
-app.on('ready', () => {
+app.on('ready', async () => {
     main = new BrowserWindow({
         webPreferences : {
             nodeIntegration: true,
@@ -134,12 +104,13 @@ app.on('ready', () => {
             enableRemoteModule: false    
         }
     });
-    let str;
+    createWindow();
     fs.readFile('./keywords.json',{encoding:'utf-8',flag:'r+'},(err, data) =>{
         console.log(data);
         const obj = JSON.parse(data);
         keywords = obj['keywords'];
     });
-
-    createWindow();
+    contents = await parser.getContents(site);
+    filterContents();
+    main.webContents.send('init',filteredContents);
 });
