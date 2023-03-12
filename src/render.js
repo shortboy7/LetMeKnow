@@ -94,6 +94,7 @@ function getContents(event, argument){
 const loadsite = (idx) => {
   ipcRenderer.send('loadSite', idx);
 }
+
 // [s, e)
 function createContentList(s, e){
   let str = '';

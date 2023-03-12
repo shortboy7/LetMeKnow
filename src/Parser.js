@@ -24,30 +24,6 @@ const getFunctions = {
     }
 };
 
-let site = [
-    {
-        name:'dongguk',
-        url:'https://www.dongguk.edu/article/',
-        board: [
-            //HAKSANOTICE/list?pageIndex=1&
-            // article/${board}/list?pageIndex=${pageIndex}
-            'GENERALNOTICES',
-            'HAKSANOTICE',
-            'IPSINOTICE',
-            'JANGHAKNOTICE',
-            'HAKSULNOTICE',
-        ]
-    },
-    // {
-    //     'name':'dongguk_computer_enginner',
-    //     'url':'https://cse.dongguk.edu/?',
-    //     'board': [
-    //         //pageid = 1&page_id=799
-    //         '799',
-    //     ]
-    // },
-];
-
 module.exports = class Parser{
     constructor(){
         this.promises = [];
@@ -58,7 +34,7 @@ module.exports = class Parser{
     async getContents(sites){
         let l = 0;
         this.promises = [];
-        for(site of sites){
+        for(let site of sites){
             // console.log(site.board);
             site.board.forEach((board)=>{
                 for(let page = 1 ; page < 3; page += 1){
@@ -85,7 +61,6 @@ module.exports = class Parser{
         });
         // console.log("before");
         // console.log("after");
-        
     }
 };
 
@@ -93,6 +68,7 @@ module.exports = class Parser{
     Promise 객체는 명시적으로 resolve 함수를 호출해야 끝을 확인할 수 있다.
     안그러면 실행을 했더라도 무슨 상태인지 몰라서 then이 실행이 안됨.
 */
+
 
 // .then(async (l)=>{
 //     console.log(promises);

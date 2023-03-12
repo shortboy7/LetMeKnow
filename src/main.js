@@ -1,12 +1,13 @@
 const {app, Menu,BrowserWindow, ipcMain, webContents} = require("electron");
 const Parser = require('./Parser');
+const Filter = require('./Filter');
 const fs = require('fs');
 const { stringify } = require("querystring");
 const { webcrypto } = require("crypto");
 const { resolve } = require("path");
 
 const parser = new Parser();
-
+const filter = new Filter();
 const site = [
     {
         'name':'dongguk',
@@ -36,39 +37,39 @@ let keywords = [];
 let filteredContents = [];
 let main;
 
-function leftPad(value){
-    if(value >= 10) return value;
-    else return `0${value}`;
-}
+// function leftPad(value){
+//     if(value >= 10) return value;
+//     else return `0${value}`;
+// }
 
-function toStringByFormat(source , delimiter = '-'){
-    const year = source.getFullYear();
-    const month = leftPad(source.getMonth() + 1);
-    console.log(month);
-    const day = leftPad(source.getDate());
+// function toStringByFormat(source , delimiter = '-'){
+//     const year = source.getFullYear();
+//     const month = leftPad(source.getMonth() + 1);
+//     console.log(month);
+//     const day = leftPad(source.getDate());
 
-    return [year, month, day].join(delimiter);
-}
+//     return [year, month, day].join(delimiter);
+// }
 
-function filterContents(){
-    let newFilteredContents = [];
-    const dateString = toStringByFormat(new Date(), '.');
-    for(const content of contents){
-        // if(content.date < dateString) continue;
-        for(const keyword of keywords){
-            if(content.title.includes(keyword)){
-                newFilteredContents.push(content);
-                break;
-            }
-        }
-    }
-    newFilteredContents.sort((left, right) => {
-        if(left.date < right.date) return 1;
-        else if(left.date > right.date) return -1;
-        else return 0;
-      });
-    filteredContents = newFilteredContents;
-}
+// function filterContents(){
+//     let newFilteredContents = [];
+//     const dateString = toStringByFormat(new Date(), '.');
+//     for(const content of contents){
+//         // if(content.date < dateString) continue;
+//         for(const keyword of keywords){
+//             if(content.title.includes(keyword)){
+//                 newFilteredContents.push(content);
+//                 break;
+//             }
+//         }
+//     }
+//     newFilteredContents.sort((left, right) => {
+//         if(left.date < right.date) return 1;
+//         else if(left.date > right.date) return -1;
+//         else return 0;
+//       });
+//     filteredContents = newFilteredContents;
+// }
 
 const getView = (url) => {
     const newWindow = new BrowserWindow({
@@ -104,6 +105,7 @@ app.on('ready', async () => {
             enableRemoteModule: false    
         }
     });
+    console.log(typeof(filterContents));
     createWindow();
     fs.readFile('./keywords.json',{encoding:'utf-8',flag:'r+'},(err, data) =>{
         console.log(data);
@@ -111,6 +113,6 @@ app.on('ready', async () => {
         keywords = obj['keywords'];
     });
     contents = await parser.getContents(site);
-    filterContents();
+    filteredContents = filter.filterContents(contents, keywords);
     main.webContents.send('init',filteredContents);
 });
